@@ -10,6 +10,6 @@ const route = Router();
 // Users
 
 route.get('/show_all_users', ShowAllUser);
-route.post('create_user', CreateUser);
+route.post('/create_user', CreateUser);
 
 export default route;
