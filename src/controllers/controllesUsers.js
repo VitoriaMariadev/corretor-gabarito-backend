@@ -47,7 +47,7 @@ const CreateUser = async (req, res) => {
             .json({ Mensagem: "As senha estão diferentes.", status: 400 });
         } else {
           const checkUser = await pool.query(
-            "SELECT * FROM usuario WHERE name = $1",
+            "SELECT * FROM users WHERE name = $1",
             [name]
           );
           if (checkUser.rows.length > 0) {
