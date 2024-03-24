@@ -6,15 +6,15 @@ import jwt from "jsonwebtoken";
 
 const ShowAllUser = async (req, res) => {
     try {
-      const usuarios = await pool.query("SELECT name FROM users");
+      const users = await pool.query("SELECT name FROM users");
   
-      if (usuarios.rows.length === 0) {
+      if (users.rows.length === 0) {
         return res
           .status(200)
           .json({ mensagem: "Não há usuários cadastrados.", status: 400 });
       }
   
-      res.status(200).json(usuarios.rows);
+      res.status(200).json(users.rows);
     } catch (erro) {
       res.status(500).json({ mensagem: erro.message });
     }
@@ -31,20 +31,20 @@ const CreateUser = async (req, res) => {
         .status(200)
         .json({ Mensagem: "Há campo(s) vazio(s).", status: 400 });
     } else {
-      // const novoUsuario = primeiraLetraMaiuscula(name);
+      // const newUser = primeiraLetraMaiuscula(name);
       const newPassword = password.trim();
       const newConfirmPassword = confirmPassword.trim();
 
       if (newPassword.length < 6) {
         return res.status(200).json({
-          Mensagem: "A senha precisa ter no minimo 6 caracteres.",
+          Mensagem: "A password precisa ter no minimo 6 caracteres.",
           status: 400,
         });
       } else {
         if (newPassword != newConfirmPassword) {
           return res
             .status(200)
-            .json({ Mensagem: "As senha estão diferentes.", status: 400 });
+            .json({ Mensagem: "As password estão diferentes.", status: 400 });
         } else {
           const checkUser = await pool.query(
             "SELECT * FROM users WHERE name = $1",
@@ -82,6 +82,82 @@ const CreateUser = async (req, res) => {
   }
 };
 
+
+const Login = async (req, res) => {
+
+  console.log('entrei na função')
+  try {
+    const { name, password } = req.body;
+
+    console.log(name, password)
+
+    if (!name || !password) {
+      return res
+        .status(200)
+        .json({ Mensagem: "Há campo(s) vazio(s).", status: 400 });
+    }
+
+    // const newUser = primeiraLetraMaiuscula(name);
+    // const newPassword = password.trim();
+
+    const checkUser = await pool.query(
+      "SELECT * FROM users WHERE name = $1",
+      [name]
+    );
+    const passwordValid = bcrypt.compareSync(
+      password,
+      checkUser.rows[0].password
+    );
+
+    if (!passwordValid) {
+      return res
+        .status(200)
+        .json({ Mensagem: "Usuário ou password incorretos.", status: 400 });
+    }
+
+    // const usuarioId = checkUser.rows[0].id_usuario;
+    const userPassword = checkUser.rows[0].password;
+
+    const token = jwt.sign(
+      { users: checkUser.rows[0].name },
+      "AluW4ok65cOK0iLdZbP6600b88ab4b30",
+      { expiresIn: 86400 }
+    );
+
+    console.log('passei no token')
+
+    // const verificaUsuarioAdm = await pool.query(
+    //   `SELECT u.id_usuario, u.name 
+    //     FROM usuario u 
+    //     inner join administrador a on a.id_usuario = u.id_usuario
+    //     where a.id_usuario = $1`,
+    //   [usuarioId]
+    // );
+
+    // if (verificaUsuarioAdm.rows.length > 0) {
+    //   res.cookie("token", token, { httpOnly: true });
+    //   res
+    //     .status(200)
+    //     .json({
+    //       token,
+    //       usuarioId,
+    //       newUser,
+    //       userPassword,
+    //       tipoUsuario: admin,
+    //     });
+    // }
+
+    res.cookie("token", token, { httpOnly: true });
+
+    res
+      .status(200)
+      .json({ token, name, password});
+
+  } catch (erro) {
+      return res.status(500).json({ Mensagem: erro.Mensagem });
+    
+  }
+};
 // --------------------- DELETE -----------------
 
 // --------------------- PATCH ------------------
@@ -91,4 +167,5 @@ const CreateUser = async (req, res) => {
 export {
   ShowAllUser,
   CreateUser,
+  Login
 };
