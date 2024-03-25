@@ -115,7 +115,7 @@ const Login = async (req, res) => {
         .json({ Mensagem: "Usuário ou password incorretos.", status: 400 });
     }
 
-    // const usuarioId = checkUser.rows[0].id_usuario;
+    const userId = checkUser.rows[0].id_user;
     const userPassword = checkUser.rows[0].password;
 
     const token = jwt.sign(
@@ -151,7 +151,7 @@ const Login = async (req, res) => {
 
     res
       .status(200)
-      .json({ token, name, password});
+      .json({ token, name, password, id_user});
 
   } catch (erro) {
       return res.status(500).json({ Mensagem: erro.Mensagem });
