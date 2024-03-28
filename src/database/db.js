@@ -18,8 +18,22 @@ const createTables = async () => {
       id_user SERIAL PRIMARY KEY,
       name VARCHAR(255),
       password VARCHAR(255)
-    );
-    
+  );
+  
+  CREATE TABLE IF NOT EXISTS folders (
+      id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL,
+      name VARCHAR(100) NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id_user)
+  );
+  
+  CREATE TABLE IF NOT EXISTS files (
+      id SERIAL PRIMARY KEY,
+      folder_id INT NOT NULL,
+      name VARCHAR(100) NOT NULL,
+      FOREIGN KEY (folder_id) REFERENCES folders(id)
+  );
+  
    
     `);
     client.release();
