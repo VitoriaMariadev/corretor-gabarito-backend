@@ -8,7 +8,7 @@ import {
 
 import { TokenValid, deleteToken } from "../controllers/controllesToken.js";
 
-import { ShowAllFoldersByUser, CreateFolders } from "../controllers/controllesFolders.js";
+import { ShowAllFoldersByUser, ShowFolderById, CreateFolders } from "../controllers/controllesFolders.js";
 
 import { ShowAllFilesByFolder, CreateFile } from "../controllers/controllesFiles.js";
 
@@ -28,6 +28,7 @@ route.post("/deletar_token", deleteToken);
 // Folders
 
 route.post('/show_all_folders', ShowAllFoldersByUser)
+route.get('/show_folder_id/:id', ShowFolderById)
 route.post('/create_folder', CreateFolders)
 
 // Files 

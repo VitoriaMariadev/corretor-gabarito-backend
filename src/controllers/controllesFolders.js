@@ -22,6 +22,26 @@ const ShowAllFoldersByUser = async (req, res) => {
     }
   };
 
+const ShowFolderById = async (req, res) => {
+  const {id} = req.params
+  console.log(id);
+
+  try {
+      const folder = await pool.query(`SELECT * FROM folders WHERE id = ${id}`);
+      
+      if (folder.rows.length === 0) {
+          return res.status(400).json({ mensagem: "Pasta não encontrada.", status: 400 });
+      }
+
+      const folderName = folder.rows[0].name; // Supondo que o nome da pasta está armazenado na coluna "nome"
+      
+      res.status(200).json({ nome: folderName });
+  } catch (erro) {
+      res.status(500).json({ mensagem: erro.message });
+  }
+};
+
+
 const CreateFolders = async (req, res) => {
 
     try{
@@ -53,5 +73,7 @@ const CreateFolders = async (req, res) => {
 
 export {
     ShowAllFoldersByUser,
-    CreateFolders
+    ShowFolderById,
+    CreateFolders,
+    
   };
