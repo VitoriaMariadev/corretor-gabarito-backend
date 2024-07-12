@@ -1,5 +1,7 @@
 import pool from "../database/db.js"
 
+// --------------------- GET --------------------
+
 const ShowAllFoldersByUser = async (req, res) => {
 
     const id_user = req.body.id_user;
@@ -41,6 +43,7 @@ const ShowFolderById = async (req, res) => {
   }
 };
 
+// --------------------- POST -------------------
 
 const CreateFolders = async (req, res) => {
 
@@ -71,9 +74,39 @@ const CreateFolders = async (req, res) => {
 
 }
 
+// --------------------- DELETE -----------------
+
+const DeleteFolder = async (req, res) => {
+
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res
+        .status(200)
+        .json({ Mensagem: "Id não informado.", status: 400 });
+    }
+
+    // excluindo relacionamento da pasta
+    await pool.query(`DELETE FROM files WHERE folder_id = ${id}`);
+    await pool.query(`DELETE FROM folders WHERE id = ${id}`);
+
+    return res.status(200).json({ Mensagem: "Pasta excluída com sucesso." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ mensagem: "Ocorreu um erro interno no servidor" });
+  }
+};
+
+// --------------------- PATCH ------------------
+
+// --------------------- EXPORT -----------------
+
 export {
     ShowAllFoldersByUser,
     ShowFolderById,
     CreateFolders,
+    DeleteFolder
     
   };

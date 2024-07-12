@@ -2,7 +2,7 @@ import pool from "../database/db.js"
 
 const ShowAllFilesByFolder = async (req, res) => {
   try {
-    const {id} = req.params // Supondo que o ID da pasta é passado como parâmetro na URL
+    const {id} = req.params 
     
     const files = await pool.query(`SELECT * FROM files WHERE folder_id = ${id}`);
 

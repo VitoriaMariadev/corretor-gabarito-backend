@@ -124,8 +124,6 @@ const Login = async (req, res) => {
       { expiresIn: 86400 }
     );
 
-    console.log('passei no token')
-
     // const verificaUsuarioAdm = await pool.query(
     //   `SELECT u.id_usuario, u.name 
     //     FROM usuario u 
@@ -160,6 +158,40 @@ const Login = async (req, res) => {
 };
 // --------------------- DELETE -----------------
 
+const DeleteUserID = async (req, res) => {
+
+  console.log("entrou aqui")
+
+  try {
+    const { id_user } = req.params;
+
+    const checkUserFolder = await pool.query(
+      "SELECT user_id FROM folders WHERE user_id = $1",
+      [id_user]
+    );
+
+    console.log('viu se tem pasta')
+
+    if (checkUserFolder.rows.length === 0) {
+      await pool.query("Delete from users where id_user = $1", [
+        id_user,
+      ]);
+
+    console.log("deletou de lá")
+
+      res.status(200).json({ Mensagem: "Usuario excluido com sucesso." });
+    } else {
+      return res
+        .status(200)
+        .json({ Message: "O usuário tem pastas!", status: 400 });
+    }
+
+    return res.status(200).json({ Mensagem: "Usuário excluido com sucesso." });
+  } catch (erro) {
+    res.status(500).json({ Mensagem: erro.Mensagem });
+  }
+};
+
 // --------------------- PATCH ------------------
 
 // --------------------- EXPORT -----------------
@@ -167,5 +199,6 @@ const Login = async (req, res) => {
 export {
   ShowAllUser,
   CreateUser,
-  Login
+  Login,
+  DeleteUserID,
 };

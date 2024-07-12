@@ -20,7 +20,7 @@ const TokenValid = async (req, res) => {
     })
 }
 
-const deleteToken = async (req, res) => {
+const DeleteToken = async (req, res) => {
     const token = req.body.token || req.query.token || req.cookies.token || req.headers['x-access-token'];
 
     if(!token){
@@ -32,5 +32,5 @@ const deleteToken = async (req, res) => {
 };
 
 export {
-    TokenValid, deleteToken
+    TokenValid, DeleteToken
 }
